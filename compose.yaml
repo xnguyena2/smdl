@@ -1,0 +1,27 @@
+services:
+  frontend:
+    image: xnguyena2/sale-management:main
+    ports:
+      - "80:5000"
+    environment:
+      - SSL_KEY_PASSWORD=sodientu
+      - SSL_ENABLE=true
+    entrypoint: java -Xmx1g -Xss50m -jar app.jar
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  postgres:
+    container_name: postgres_container
+    image: postgres:alpine
+    environment:
+      POSTGRES_DB: sale_management_product
+      POSTGRES_USER: sale_management_product_user
+      POSTGRES_PASSWORD: zkloi8e9VoHfuoT2w1BSWHhzlbujFxsT
+    volumes:
+      - ./ca/server.crt:/var/lib/postgresql/server.crt
+      - ./ca/server.key:/var/lib/postgresql/server.key
+    ports:
+      - "5432:5432"
+    command: -c ssl=on -c ssl_cert_file=/var/lib/postgresql/server.crt -c ssl_key_file=/var/lib/postgresql/server.key
+    restart: unless-stopped
